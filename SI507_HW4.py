@@ -43,6 +43,7 @@ csv_file = "movies_dataset_group.csv"
 df = pd.read_csv(csv_file)
 df["Release Date"] = pd.to_datetime(df["Release Date"], format = '%d-%b-%y', errors='coerce')
 df["Release Date"] = df["Release Date"].dt.strftime('%d-%b-%y')
+df.replace({'NaT': 'NA'}, inplace=True)
 newdf = df.fillna(value='NA')
 newdf.to_csv('movies_clean.csv')
 
@@ -59,6 +60,11 @@ newdf.to_csv('movies_clean.csv')
 
 # Use code to compute this (by opening the data file and manipulating the data in some way) and to assign the median_rating variable correctly, which we will test.
 
+# G = 1
+# PG = 2
+# PG-13 = 3
+# R = 4
+# NC-17 = 5
 
 
 ## [PART 3]
