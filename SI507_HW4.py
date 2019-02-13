@@ -12,6 +12,7 @@
 import pandas as pd
 import csv
 from datetime import datetime
+import numpy as np
 
 
 #####################
@@ -65,6 +66,19 @@ newdf.to_csv('movies_clean.csv')
 # PG-13 = 3
 # R = 4
 # NC-17 = 5
+
+rating = {1:'G', 2:'PG', 3:'PG-13', 4:'R', 5:'NC-17'}
+df['MPAA Rating'] = df['MPAA Rating'].replace({'G':1, 'PG':2, 'PG-13':3, 'R':4, 'NC-17':5})
+
+rating_list = []
+for r in df['MPAA Rating']:
+    if r in [1,2,3,4,5]:
+        rating_list.append(r)
+# print(rating_list)
+median_rating_int = np.median(rating_list)
+# print(median_rating_int)
+median_rating = rating[median_rating_int]
+# print(median_rating)
 
 
 ## [PART 3]
