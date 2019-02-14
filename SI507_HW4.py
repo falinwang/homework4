@@ -13,6 +13,9 @@ import pandas as pd
 import csv
 from datetime import datetime
 import numpy as np
+import random
+import string
+import itertools
 
 
 #####################
@@ -45,8 +48,8 @@ df = pd.read_csv(csv_file)
 df["Release Date"] = pd.to_datetime(df["Release Date"], format = '%d-%b-%y', errors='coerce')
 df["Release Date"] = df["Release Date"].dt.strftime('%d-%b-%y')
 df.replace({'NaT': 'NA'}, inplace=True)
-newdf = df.fillna(value='NA')
-newdf.to_csv('movies_clean.csv')
+df = df.fillna(value='NA')
+df.to_csv('movies_clean.csv')
 
 ## [PART 2]
 
@@ -67,16 +70,21 @@ newdf.to_csv('movies_clean.csv')
 # R = 4
 # NC-17 = 5
 
+## Create a dictionary of rating
 rating = {1:'G', 2:'PG', 3:'PG-13', 4:'R', 5:'NC-17'}
+## Replace the original rating with number 1 to 5
 df['MPAA Rating'] = df['MPAA Rating'].replace({'G':1, 'PG':2, 'PG-13':3, 'R':4, 'NC-17':5})
 
+## Create a list of all the validate rating
 rating_list = []
 for r in df['MPAA Rating']:
     if r in [1,2,3,4,5]:
         rating_list.append(r)
 # print(rating_list)
+## Use numpy.median(list) to get the median
 median_rating_int = np.median(rating_list)
 # print(median_rating_int)
+## Conver back to string
 median_rating = rating[median_rating_int]
 # print(median_rating)
 
@@ -114,3 +122,44 @@ My My My The - G
 
 print("\n\nNEW FAKE MOVIE TITLES CREATED BELOW...\n\n")
 # Write your code to enact all of this below
+
+## Create a list of words from Title
+words_lst = []
+## read csv file
+with open('movies_clean.csv', newline='') as csvfile:
+    row_reader = csv.reader(csvfile)
+    for row in row_reader:
+        words_lst = words_lst + row[1].split(" ")
+words_lst.remove('Title')
+# print(words_lst)
+
+
+## Generate a random rating
+def generate_a_rating():
+    rating = ['G', 'PG','PG-13','R','NC-17','Not Rated'] ## Create a list of rating
+    fake_movies_rating = random.choice(rating) ## Randomly choose a rating from list
+    return fake_movies_rating
+
+# print(generate_a_rating())
+
+
+## Generate a random movie name
+def generate_a_movie_name():
+    length_movie_name = random.choice([1,2,3,4,5,6]) ## Generate a random length of the movie name
+    fake_movies_lst = random.choices(words_lst, k = length_movie_name) ## Pick words from word_lst randomly
+    fake_movies_name = itertools.combinations(fake_movies_lst, length_movie_name) ## With the choosen word, generate the movie name with combinations method
+    ## The type of fake_moives_name is <class 'itertools.combinations'>
+    ## So here I convert the tuple to string
+    for i in list(fake_movies_name):
+        fake_movies_name_str = ' '.join(i)
+    return fake_movies_name_str
+
+# print(generate_a_movie_name())
+
+
+## Output
+sample_fake_movies = ""
+for i in range(10):
+    sample_fake_movies += generate_a_movie_name() + " - " + generate_a_rating() + "\n"
+
+print(sample_fake_movies)
